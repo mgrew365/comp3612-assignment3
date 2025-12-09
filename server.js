@@ -67,7 +67,50 @@ app.get("/api/painting/artist/:id", (req, res) => {
   res.json(results);
 });
 
+//ROUTE5: /api/painting/year/min/max
+app.get("/api/painting/year/:min/:max", (req, res) => {
+  // read min and max and convert to numbers
+  const minYear = parseInt(req.params.min, 10);
+  const maxYear = parseInt(req.params.max, 10);
 
+  // filter by range
+  const results = paintings.filter((p) => {
+    return p.yearOfWork >= minYear && p.yearOfWork <= maxYear;
+  });
+
+  // if no paintings found
+  if (results.length === 0) {
+    return res
+      .status(404)
+      .json({ message: "No paintings found in this year range!" });
+  }
+
+  // otherwise return all matching
+  res.json(results);
+});
+
+// ROUTE5: /api/painting/title/text
+app.get("/api/painting/title/:text", (req, res) => {
+  // get text, make it lowercase for matching
+  const searchText = req.params.text.toLowerCase();
+
+  //filtering painings by title
+  const results = paintings.filter((p) => {
+    //must be a title at least
+    if (!p.title) return false;
+    // compare in lowercase
+    return p.title.toLowerCase().includes(searchText);
+  });
+
+  //if theres no matches
+  if (results.length === 0) {
+    return res
+      .status(404)
+      .json({ message: "No paintings found with that text!"});
+  }
+  //else
+  res.json(results);
+});
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
