@@ -4,6 +4,10 @@ const port = process.env.PORT || 3000;
 
 //loading painting data 
 const paintings = require("./data/paintings-nested.json");
+//loading artist data
+const artists = require("./data/artists.json");
+//loading galleries dta
+const galleries = require("./data/galleries.json");
 
 
 app.get("/", (req, res) => {
@@ -137,6 +141,31 @@ app.get("/api/painting/color/:name", (req, res) => {
     return res
       .status(404)
       .json({ message: "No paintings found with that color!" });
+  }
+
+  res.json(results);
+});
+
+//ROUTE8: /api/artists 
+//getting all the artists
+app.get("/api/:artists", (req, res) => {
+  res.json(artists);
+});
+
+//ROUTE9: /api/artists/country 
+//arists only from the specfic country, essintially like route 6
+app.get("/api/artists/country/:country", (req, res) => {
+  const searchCountry = req.params.country.toLowerCase();
+
+  const results = artists.filter((a) => {
+    if (!a.Nationality) return false;
+    return a.Nationality.toLowerCase() === searchCountry;
+  });
+
+  if (results.length === 0) {
+    return res
+      .status(404)
+      .json({ message: "No artists found from that country!" });
   }
 
   res.json(results);
