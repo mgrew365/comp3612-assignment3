@@ -89,7 +89,7 @@ app.get("/api/painting/year/:min/:max", (req, res) => {
   res.json(results);
 });
 
-// ROUTE5: /api/painting/title/text
+// ROUTE6: /api/painting/title/text
 app.get("/api/painting/title/:text", (req, res) => {
   // get text, make it lowercase for matching
   const searchText = req.params.text.toLowerCase();
@@ -111,6 +111,37 @@ app.get("/api/painting/title/:text", (req, res) => {
   //else
   res.json(results);
 });
+
+//ROUTE7: /api/painting/color/name
+//search colour, make lowercase to compare, same concept as route 6
+app.get("/api/painting/color/:name", (req, res) => {
+  const searchColor = req.params.name.toLowerCase();
+
+  const results = paintings.filter((p) => {
+//get one of the many colour descriptions
+    if (!p.details || !p.details.annotation || !p.details.annotation.dominantColors) {
+      return false;
+    }
+
+    const dominantColors = p.details.annotation.dominantColors;
+
+    return dominantColors.some((colorObj) => {
+      return (
+        colorObj.name &&
+        colorObj.name.toLowerCase().includes(searchColor)
+      );
+    });
+  });
+
+  if (results.length === 0) {
+    return res
+      .status(404)
+      .json({ message: "No paintings found with that color!" });
+  }
+
+  res.json(results);
+});
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
