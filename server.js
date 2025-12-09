@@ -49,6 +49,25 @@ app.get("/api/painting/gallery/:id", (req, res) => {
   //else
   res.json(paintings);
 });
+
+//ROUTE4: /api/painting/artist/:id
+app.get("/api/painting/artist/:id", (req, res) => {
+  const artistId = parseInt(req.params.id, 10);
+
+  const results = paintings.filter((p) => {
+    return p.artist && p.artist.artistID === artistId;
+  });
+
+  if (results.length === 0) {
+    return res
+      .status(404)
+      .json({ message: "No paintings found for this artist ID!" });
+  }
+
+  res.json(results);
+});
+
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
