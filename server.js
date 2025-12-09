@@ -171,6 +171,32 @@ app.get("/api/artists/country/:country", (req, res) => {
   res.json(results);
 });
 
+//ROUTE10: /api/galleries | same thing as route 8 with the artsists
+app.get("/api/galleries", (req, res) => {
+  res.json(galleries);
+});
+
+//ROUTE11: /api/galleries/country 
+//path for countries - checking lowercase for matching and error messages for parameters
+app.get("/api/galleries/country/:country", (req, res) => {
+  const searchCountry = req.params.country.toLowerCase();
+
+  const results = galleries.filter((g) => {
+    // check if it exists
+    if (!g.GalleryCountry) return false;
+
+    return g.GalleryCountry.toLowerCase() === searchCountry;
+  });
+
+  if (results.length === 0) {
+    return res
+      .status(404)
+      .json({ message: "No galleries found in that country!" });
+  }
+
+  res.json(results);
+});
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
